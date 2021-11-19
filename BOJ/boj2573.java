@@ -1,119 +1,136 @@
 package boj;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class boj2573 {
-    static int N,M;
-    static int[][] ice,reice;
-    static boolean[][] visit;
-    static LinkedList<Dot> list;
-    static int[] dx = {-1,1,0,0};
-    static int[] dy = {0,0,-1,1};
-    static class Dot{
-        int x;
-        int y;
-        public Dot(int x,int y){
-            this.x = x;
-            this.y = y;
-        }
-    }
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        ice = new int[N][M];
-        reice = new int[N][M];
-        visit = new boolean[N][M];
-        list = new LinkedList<Dot>();
-        int separation=0,year=0;
-        for(int i=0;i<N;i++){
-            st = new StringTokenizer(br.readLine());
-            for(int j=0;j<M;j++){
-                ice[i][j] = Integer.parseInt(st.nextToken());
-                visit[i][j] = false;
-                if(ice[i][j] != 0){
-                    list.add(new Dot(i,j));
-                }
+	static int n,m,map[][];
+	static int dx[] = {1,-1,0,0};
+	static int dy[] = {0,0,1,-1};
+	static class dot{
+		int x,y;
+		public dot(int x,int y){
+			this.x=x;
+			this.y=y;
+		}
+	}
+	static ArrayList<dot> ice;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		map = new int[n][m];
+		for(int i=0;i<n;i++){
+			st  = new StringTokenizer(br.readLine());
+			for (int j = 0; j < m; j++) {
+				map[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+		int time=0;
+		int land=0;
+		while(true){
+			land=0;
+			boolean[][] visit = new boolean[n][m];
+			for(int i=1;i<n;i++){
+				for(int j=1;j<m;j++){
+					if(map[i][j] > 0 && !visit[i][j]){
+						bfs(i,j,visit);
+						land++;
+					}
+				}
+			}for(int i=0;i<n;i++){
+				for(int j=0;j<m;j++){
+					System.out.print(map[i][j]+" ");
+				}System.out.println();
+				
+			}System.out.println();
+			if(land==0){
+				time=0;
+				break;
+			}
+			if(land>=2){
+				break;
+			}
+			
+			melt();
+			time++;
+		}
+		System.out.println(time);
+		
+	}
+	private static void bfs(int x, int y,boolean[][] visit) {
+		Queue<dot> q = new LinkedList<>();
+		q.add(new dot(x,y));
+		visit[x][y] = true;
+		while(!q.isEmpty()){
+			dot d = q.poll();
+			for(int i=0;i<4;i++){
+				int nx = d.x+dx[i];
+				int ny = d.y+dy[i];
+				if(nx<0|| ny<0||nx>=n||ny>=m || visit[nx][ny]==true)continue;
+				if(map[nx][ny] >0){
+					visit[nx][ny] = true;
+					q.add(new dot(nx,ny));
+				}
+			}
+		}
+	}
+	private static void melt() {
+		ice = new ArrayList<>();
+		boolean[][] visit = new boolean[n][m];
+		for(int i=0;i<n;i++){
+			for(int j=0;j<m;j++){
+				if(map[i][j] !=0){
+					ice.add(new dot(i,j));
+					visit[i][j] =true;
+				}
+			}
+		}
+		int size = ice.size();
+		while(size-- > 0){
+			dot d = ice.get(size);
+			int sea=0;
+			for(int i=0;i<4;i++){
+				int nx = d.x+dx[i];
+				int ny = d.y+dy[i];
+				if(nx<0|| ny<0||nx>=n||ny>=m )continue;
+				if(map[nx][ny] == 0 && !visit[nx][ny]){
+					sea++;
+				}
+			}
+			if (map[d.x][d.y] - sea < 0) {
+                map[d.x][d.y] = 0;
+            } else {
+                map[d.x][d.y] -= sea;
             }
-        }
-        while(separation<2) {
-            for(int i=0;i<list.size();i++){
-                Dot d = list.get(i);
-                if(visit[d.x][d.y]==false){
-                    dfs(d.x,d.y);
-                    separation++;
-                }
-            }
-            if(separation>=2){
-                System.out.println(year);
-                break;
-            }
-            if(list.size() == 0){
-                System.out.println(0);
-                break;
-            }
-            reduceArea();
+		}
+//		int size= ice.size();
+//		boolean[][] visit = new boolean[n][m];
+//		while(size-- > 0){
+//			dot d = ice.get(size);
+//			visit[d.x][d.y] = true;
+//			int sea=0;
+//			for(int i=0;i<4;i++){
+//				int nx = d.x+dx[i];
+//				int ny = d.y+dy[i];
+//				if(nx<0|| ny<0||nx>=n||ny>=m )continue;
+//				if(map[nx][ny] == 0 && !visit[nx][ny]){
+//					sea++;
+//				}
+//			}
+//			if (map[d.x][d.y] - sea < 0) {
+//                map[d.x][d.y] = 0;
+//            } else {
+//                map[d.x][d.y] -= sea;
+//            }
+//			if(map[d.x][d.y]==0)ice.remove(size);
+//		}
+	}
 
-            System.out.println();
-            ice = reice.clone();
-            reice = new int[N][M];
-
-            checklist();
-            separation=0;
-            year++;
-        }
-
-    }
-
-    private static void checklist() {
-        list.clear();
-        for(int i=0;i<N;i++){
-            for(int j=0;j<M;j++){
-                if(ice[i][j]!=0){
-                    list.add(new Dot(i,j));
-                }
-            }
-        }
-        for(boolean a[]:visit){
-            Arrays.fill(a,false);
-        }
-    }
-
-    private static void dfs(int x, int y) {
-        visit[x][y]=true;
-        for(int i=0;i<4;i++){
-            int nx = x+dx[i];
-            int ny = y+dy[i];
-            if(nx<0 || ny<0 || nx>=N || ny>=M)continue;
-            if(ice[nx][ny] !=0 && visit[nx][ny]==false){
-                visit[nx][ny]=true;
-                dfs(nx,ny);
-            }
-        }
-    }
-
-    private static void reduceArea() {
-        int zero=0;
-        for(int index=0;index<list.size();index++){
-            zero=0;
-            Dot d = list.get(index);
-            for(int i=0;i<4;i++){
-                int nx = d.x+dx[i];
-                int ny = d.y+dy[i];
-
-                if(nx<0 || ny<0 || nx>=N || ny>=M)continue;
-                if(ice[nx][ny]==0)zero++;
-            }
-            reice[d.x][d.y] = ice[d.x][d.y]-zero;
-            if(reice[d.x][d.y]<=0) {
-                reice[d.x][d.y]=0;
-            }
-        }
-    }
 }

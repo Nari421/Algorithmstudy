@@ -114,7 +114,7 @@ public class boj17135 {
 			int mind = list.get(0).d;
 			int minr = list.get(0).r;
 			int minc = list.get(0).c;
-//			System.out.println(mind + " "+minr+" "+minc);
+			System.out.println(mind + " "+minr+" "+minc);
 			infoq.add(new info(mind,minr,minc));
 		}
 	}

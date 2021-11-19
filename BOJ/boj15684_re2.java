@@ -33,7 +33,11 @@ public class boj15684_re2 {
 			line[x][y] = 1;
 			visit[x][y] = true;
 		}
-		
+		for(int i=1;i<=n;i++){
+			for(int j=1;j<=m+1;j++){
+				System.out.print(line[i][j]+" ");
+			}System.out.println();
+		}
 		for (int i = 0; i <= 3; i++) {
 			findLine(i,1,0);
 			if(isDone){
@@ -67,6 +71,12 @@ public class boj15684_re2 {
 		for(int j=1;j<=n;j++){
 			int origin = j;
 			int start = j;
+			for(int ii=1;ii<=n;ii++){
+				for(int ji=2;ji<=m+1;ji++){
+					System.out.print(visit[ii][ji]+" ");
+				}System.out.println();
+			}
+			System.out.println(start);
 			System.out.println("start : "+start);
 			for(int i=1;i<h+1;i++){//게임 시작
 				if(visit[i][start]){
@@ -75,7 +85,8 @@ public class boj15684_re2 {
 					start-=1;
 				}
 			}
-			System.out.println(start);
+			System.out.println("game");
+			
 			if(origin == start){
 				System.out.println("true");
 				isPossible = true;

@@ -97,7 +97,7 @@ public class boj17471 {
 				if(!area[connect[now].get(i)])continue;
 				visit[connect[now].get(i)] = true;
 				q.add(connect[now].get(i));
-				System.out.println(connect[now].get(i));
+				System.out.println("a: "+connect[now].get(i));
 			}
 		}
 		
